@@ -1,2 +1,2 @@
 # Stock-Intelligence-System
-股市情報系統
+履歷生成助理

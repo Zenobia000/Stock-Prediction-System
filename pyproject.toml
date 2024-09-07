@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "stock-prediction-system"
+version = "0.1.0"
+description = ""
+authors = ["sunny <xdxd2455789@gmail.com>"]
+readme = "README.md"
+packages = [{include = "stock_prediction_system"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -1,0 +1,9 @@
+database:
+  mongodb:
+    uri: "mongodb://root:root@localhost:27017/mydatabase?authSource=admin"
+    name: mydatabase
+  postgres:
+    uri: postgresql://localhost:5432/
+    name: mydatabase
+    user: root
+    password: root

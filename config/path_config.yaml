@@ -1,0 +1,11 @@
+project_name: stock_war_room_system
+folders:
+  - subfolders:
+      - ../data/raw/
+      - ../data/processed
+      - ../data/feature
+      - ../data/models
+
+files:
+  - stocks_list_path: ../data/feature/stocks_list.csv
+

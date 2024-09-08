@@ -1,7 +1,13 @@
+import json
 import os
 import pandas as pd
 import numpy as np
 import plotly.express as px
+from matplotlib import pyplot as plt
+from matplotlib import rcParams
+# 設置中文字體，這裡假設使用 SimHei 字體
+rcParams['font.sans-serif'] = ['SimHei']  # 使用黑體字體顯示中文
+rcParams['axes.unicode_minus'] = False    # 確保負號可以正常顯示
 
 from stock_prediction_system.controller.google_real_time_news import CnyesNewsSpider
 from stock_prediction_system.utils.extract_path import PathSetting
@@ -74,6 +80,11 @@ class stock_news_extraction:
             start_time=self.start_time,
             end_time=self.end_time
         )
+
+        # 儲存成 JSON 文件，並指定編碼為 UTF-8
+        with open("../data/processed/news_data.json", "w", encoding="utf-8") as json_file:
+            json.dump(all_news_data_json, json_file, ensure_ascii=False, indent=4)
+
         return all_news_data_json
 
 # 統計財經新聞中被提及股票和產業次數
@@ -134,6 +145,31 @@ class plot_statistic_result:
         # process procedure
         return self._plot_statistic_result()
 
+    # def _plot_statistic_result(self):
+    #     # 聚合相同股票名稱+股票代碼的出現次數
+    #     df = self.compare_result_in_news
+    #     df_stock_count = df.groupby(['股票名稱', '股票代碼', '產業別'])['出現次數'].sum().reset_index()
+    #
+    #     # 1. 統計於新聞標題出現最多次的前10大 "股票代碼+股票名稱" 並繪製成長條圖
+    #     top_10_stocks = df_stock_count.nlargest(10, '出現次數')
+    #     fig1 = px.bar(top_10_stocks, x='股票名稱', y='出現次數', title='新聞標題出現最多次的前10大股票名稱')
+    #
+    #     # 2. 統計於新聞標題出現最多次的前3大產業名稱 並繪製成長條圖
+    #     df_industry_count = df.groupby('產業別')['出現次數'].sum().reset_index()
+    #     top_industries = df_industry_count.nlargest(3, '出現次數')
+    #     fig2 = px.bar(top_industries, x='產業別', y='出現次數', title='新聞標題出現最多次的前3大產業名稱')
+    #
+    #     # 顯示結果
+    #     # fig1.show()
+    #     # fig2.show()
+    #
+    #     # 保存為 HTML 文件
+    #     # 保存為 HTML 文件並確保使用 UTF-8 編碼，中文顯示正確
+    #     fig1.write_html("新聞標題出現最多次的前10大股票名稱.html", include_plotlyjs='cdn', full_html=True,
+    #                     encoding='utf-8')
+    #     fig2.write_html("新聞標題出現最多次的前3大產業名稱.html", include_plotlyjs='cdn', full_html=True,
+    #                     encoding='utf-8')
+
     def _plot_statistic_result(self):
         # 聚合相同股票名稱+股票代碼的出現次數
         df = self.compare_result_in_news
@@ -141,17 +177,31 @@ class plot_statistic_result:
 
         # 1. 統計於新聞標題出現最多次的前10大 "股票代碼+股票名稱" 並繪製成長條圖
         top_10_stocks = df_stock_count.nlargest(10, '出現次數')
-        fig1 = px.bar(top_10_stocks, x='股票名稱', y='出現次數', title='新聞標題出現最多次的前10大股票名稱')
+
+        # 繪製前10大股票的長條圖
+        plt.figure(figsize=(10, 6))
+        plt.bar(top_10_stocks['股票名稱'], top_10_stocks['出現次數'], color='skyblue')
+        plt.title('新聞標題出現最多次的前10大股票名稱', fontsize=14)
+        plt.xlabel('股票名稱', fontsize=12)
+        plt.ylabel('出現次數', fontsize=12)
+        plt.xticks(rotation=45, ha='right')  # 避免文字重疊
+        plt.tight_layout()
+        plt.savefig('新聞標題出現最多次的前10大股票名稱.png')  # 保存圖表為 PNG
+        plt.show()
 
         # 2. 統計於新聞標題出現最多次的前3大產業名稱 並繪製成長條圖
         df_industry_count = df.groupby('產業別')['出現次數'].sum().reset_index()
         top_industries = df_industry_count.nlargest(3, '出現次數')
-        fig2 = px.bar(top_industries, x='產業別', y='出現次數', title='新聞標題出現最多次的前3大產業名稱')
 
-        # 顯示結果
-        fig1.show()
-        fig2.show()
-
+        # 繪製前3大產業的長條圖
+        plt.figure(figsize=(8, 5))
+        plt.bar(top_industries['產業別'], top_industries['出現次數'], color='lightcoral')
+        plt.title('新聞標題出現最多次的前3大產業名稱', fontsize=14)
+        plt.xlabel('產業別', fontsize=12)
+        plt.ylabel('出現次數', fontsize=12)
+        plt.tight_layout()
+        plt.savefig('新聞標題出現最多次的前3大產業名稱.png')  # 保存圖表為 PNG
+        plt.show()
 
 if __name__ == '__main__':
     path_setting = PathSetting()
